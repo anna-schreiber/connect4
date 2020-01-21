@@ -1,9 +1,9 @@
 import numpy as np
 import math
-#import pygame
-import sys
 import random
 import time
+import json
+import requests
 
 ROWS = 6
 COLUMNS = 7
@@ -140,6 +140,17 @@ def pick_best_move(board, piece):
 
     return best_col
 
+
+def api_alg(COLUMNS):
+    url = "https://tnx10c81ea.execute-api.us-east-1.amazonaws.com/dev/movealg"
+    data = {"num_columns": COLUMNS}
+    r = requests.post(url, json=data)
+    col_number = int(r.json())
+    return col_number
+
+def api_ml():
+    pass
+
 board = create_board()
 print_board(board)
 game_over = False
@@ -170,7 +181,7 @@ while not game_over:
         print("Computron is thinking...")
 
         if game_version == 0:
-            col = random.randint(0, COLUMNS-1) # Pick a random column to drop a piece in
+            col = api_alg(COLUMNS)
         else:
             col = pick_best_move(board, CPU_PIECE)
         
