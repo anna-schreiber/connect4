@@ -68,7 +68,7 @@ def evaluate_score(window, piece):
     
     opponent_piece = PLAYER_PIECE
     if piece == PLAYER_PIECE:
-        opponent_piece = AI_PIECE
+        opponent_piece = CPU_PIECE
         
     if window.count(piece) == 4:
             score += 100 # Gives a score of 100 for 4-in-a-row
