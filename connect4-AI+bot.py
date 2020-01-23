@@ -108,12 +108,16 @@ def score_position(board, piece):
     for r in range(ROWS - 3):
         for c in range(COLUMNS - 3):
             window = [board[r+i][c+i] for i in range(WINDOW_LENGTH)]
+            if window.count(piece) == 3 and window.count(0) == 1:
+                print("positive slope diagonal", window)
             score += evaluate_score(window, piece)
 
     # score negative sloped diagonal
     for r in range(ROWS - 3):
         for c in range(COLUMNS - 3):
             window = [board[r+3-i][c+i] for i in range(WINDOW_LENGTH)]
+            if window.count(piece) == 3 and window.count(0) == 1:
+                print("negative slope diagonal")
             score += evaluate_score(window, piece)
 
     return score
