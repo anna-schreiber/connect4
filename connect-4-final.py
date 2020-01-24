@@ -20,14 +20,15 @@ CPU_PIECE = 2
 # When the game starts, this triggers the option to play against a bot or AI
 MOVE = 0
 
-WIN_COLUMN = 0
+# To authenticate through AWS API Gateway
+API_KEY = "KlHMsZdpjaaQ6sfFKIuhy1jyPCvBKArd4dOj3vQa"
 
 def create_board():
     board = np.zeros((6,7))
     return board
 
 def drop_piece(board, row, col, piece):
-    board[row][col] = piece
+    board[row][col] = piece # Drop the piece into the specified column after finding the first open row
 
 def is_valid_location(board, col):
     return board[5][col] == 0 # Check to see if the column has an open spot
@@ -67,32 +68,27 @@ def winning_move(board, piece):
 
 def api_alg(board):
     json_board = json.dumps(board.tolist())
-    #url = "http://127.0.0.1:5000/api/v1/movealg"
     url = "https://tnx10c81ea.execute-api.us-east-1.amazonaws.com/dev/movealg"
+    headers = {
+        "x-api-key": API_KEY
+    }
     data = {
         "board": json_board
     }
-    r = requests.post(url, json=data)
+    r = requests.post(url, json=data, headers=headers)
     col_number = int(r.json())
     return col_number
 
 def api_minimax(board, depth):
     json_board = json.dumps(board.tolist())
-    #url = "http://127.0.0.1:5000/api/v1/moveminimax"
     url = "https://rsnva5xewi.execute-api.us-east-1.amazonaws.com/dev"
     headers = {
-        "x-api-key": "KlHMsZdpjaaQ6sfFKIuhy1jyPCvBKArd4dOj3vQa"
+        "x-api-key": API_KEY
     }
     data = {
         "board": json_board, 
-        "depth": depth, 
-        #"maximizingPlayer": maximizingPlayer, 
-        "num_columns": COLUMNS, 
-        "cpu_piece": CPU_PIECE, 
-        "player_piece":PLAYER_PIECE,
-        "num_rows": ROWS, 
-        "window_length": WINDOW_LENGTH
-        }
+        "depth": depth
+    }
     r = requests.post(url, json=data, headers=headers)
     col_number = int(r.json())
     return col_number
@@ -103,9 +99,11 @@ game_over = False
 turn = random.randint(PLAYER, CPU) # Randomly selects who goes first
 
 while not game_over:
+    # If it is the start of the game, give the option to play against a bot or AI
     if MOVE == 0:
         game_version = int(input("Would you like to play against a beginner bot or expert AI? Enter 0 for bot, 1 for AI: "))
         MOVE = 1
+
     # Get player's input
     if turn == PLAYER:
         col = int(input("Player 1 make your selection (0-6): "))
@@ -116,6 +114,7 @@ while not game_over:
 
             if winning_move(board, PLAYER_PIECE):
                 print("Player 1 wins, congrats!")
+                MOVE = 0
                 game_over = True
 
             turn += 1
@@ -136,6 +135,7 @@ while not game_over:
 
             if winning_move(board, CPU_PIECE):
                 print("Computron wins, beep boop")
+                MOVE = 0
                 game_over = True
 
             turn += 1
