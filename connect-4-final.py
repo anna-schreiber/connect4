@@ -81,7 +81,7 @@ def api_alg(board):
 
 def api_minimax(board, depth):
     json_board = json.dumps(board.tolist())
-    url = "https://rsnva5xewi.execute-api.us-east-1.amazonaws.com/dev"
+    url = "https://rsnva5xewi.execute-api.us-east-1.amazonaws.com/dev/moveml"
     headers = {
         "x-api-key": API_KEY
     }
@@ -90,7 +90,7 @@ def api_minimax(board, depth):
         "depth": depth
     }
     r = requests.post(url, json=data, headers=headers)
-    col_number = int(r.json())
+    col_number = r.json()
     return col_number
 
 board = create_board()
